@@ -73,31 +73,20 @@ function handleCheckout() {
     return;
   }
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0) * 100;
-
-  // ✅ GANTI DENGAN LINK APPS SCRIPT ANDA
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const sheetURL = "https://script.google.com/macros/s/AKfycbx4YdSI0ehfBSHApWCnUD5oRAW1-d25saBnImkY1qcYCm5SH264dOhwCBvEAYq1XKRK1A/exec";
 
-  fetch(sheetURL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name,
-      email,
-      phone,
-      items: cart,
-      total: totalAmount / 100
-    })
-  })
+  const encodedItems = encodeURIComponent(JSON.stringify(cart));
+  const url = `${sheetURL}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&items=${encodedItems}&total=${totalAmount}`;
+
+  fetch(url)
     .then(() => {
       const data = new URLSearchParams();
       data.append("userSecretKey", "r1w0bv75-rlqt-k35b-gqal-mzxse5so0x2l");
       data.append("categoryCode", "44ubvkc8");
       data.append("billName", "Pembayaran eKlinik");
       data.append("billDescription", "Bayaran ubat/ujian/prosedur dari eKlinik");
-      data.append("billAmount", totalAmount.toString());
+      data.append("billAmount", (totalAmount * 100).toString()); // dalam sen
       data.append("billEmail", email);
       data.append("billPhone", phone);
       data.append("billTo", name);
@@ -112,6 +101,7 @@ function handleCheckout() {
     .then(response => response.json())
     .then(result => {
       if (result[0]?.BillCode) {
+        localStorage.removeItem("cart"); // kosongkan troli
         window.location.href = `https://toyyibpay.com/${result[0].BillCode}`;
       } else {
         alert("Gagal cipta bil.");
