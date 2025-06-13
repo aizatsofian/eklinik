@@ -32,7 +32,8 @@ function handleCheckout() {
   dataForToyyib.append("categoryCode", "44ubvkc8");
   dataForToyyib.append("billName", "Pembayaran eKlinik");
   dataForToyyib.append("billDescription", "Bayaran ubat/ujian/prosedur dari eKlinik");
-  dataForToyyib.append("billPriceSetting", "1"); // ✅ Tambah baris ini
+  dataForToyyib.append("billPriceSetting", "1");       // ✅ Diperlukan
+  dataForToyyib.append("billPayorInfo", "1");          // ✅ Diperlukan
   dataForToyyib.append("billAmount", (totalAmount * 100).toString());
   dataForToyyib.append("billEmail", email);
   dataForToyyib.append("billPhone", phone);
