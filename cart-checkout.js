@@ -28,8 +28,8 @@ function handleCheckout() {
   // 2. Kira jumlah keseluruhan
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  // 3. Hantar data ke Google Apps Script backend
-  fetch("https://script.google.com/macros/s/AKfycbxSF8OSffhWdaYEozrUPkRlL7HFI96K9RrBaEhu_1R62j-S6koTYFIvaJORgllboyqfxw/exec", {
+  // 3. Hantar data ke backend Vercel
+  fetch("https://eklinik.vercel.app/api/create-bill", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,8 +48,8 @@ function handleCheckout() {
       console.log("Troli dikosongkan. Mengubah hala ke laman pembayaran...");
       window.location.href = `https://toyyibpay.com/${result.billCode}`;
     } else {
-      console.error("Gagal cipta bil:", result);
-      alert("Gagal cipta bil pembayaran. Sila cuba semula.");
+      alert("Gagal cipta bil pembayaran.");
+      console.error(result);
     }
   })
   .catch(err => {
