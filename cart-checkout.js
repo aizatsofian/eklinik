@@ -23,79 +23,43 @@ function handleCheckout() {
 
   console.log("Maklumat pelanggan dan troli telah disahkan.");
 
-  // 2. Sediakan data untuk dihantar
+  // 2. Kira jumlah keseluruhan
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const sheetURL = "https://script.google.com/macros/s/AKfycbx4YdSI0ehfBSHApWCnUD5oRAW1-d25saBnImkY1qcYCm5SH264dOhwCBvEAYq1XKRK1A/exec";
 
-  const dataForGoogle = {
-    name,
-    email,
-    phone,
-    items: cart,
-    total: totalAmount
-  };
+  // 3. Sediakan data untuk ToyyibPay
+  const dataForToyyib = new URLSearchParams();
+  dataForToyyib.append("userSecretKey", "r1w0bv75-rlqt-k35b-gqal-mzxse5so0x2l");
+  dataForToyyib.append("categoryCode", "44ubvkc8");
+  dataForToyyib.append("billName", "Pembayaran eKlinik");
+  dataForToyyib.append("billDescription", "Bayaran ubat/ujian/prosedur dari eKlinik");
+  dataForToyyib.append("billAmount", (totalAmount * 100).toString()); // dalam sen
+  dataForToyyib.append("billEmail", email);
+  dataForToyyib.append("billPhone", phone);
+  dataForToyyib.append("billTo", name);
+  dataForToyyib.append("billReturnUrl", "https://aizatsofian.github.io/eklinik/");
+  dataForToyyib.append("billCallbackUrl", "https://aizatsofian.github.io/eklinik/success.html");
 
-  console.log("Menghantar data ke Google Sheet...");
+  console.log("Menghantar permintaan 'createBill' ke ToyyibPay...");
 
-  // 3. Hantar data ke Google Sheet
-  fetch(sheetURL, {
+  // 4. Hantar ke ToyyibPay
+  fetch("https://toyyibpay.com/index.php/api/createBill", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(dataForGoogle),
-  })
-  .then(response => {
-    if (!response.ok) {
-      // Jika Google Script mengembalikan ralat (cth: 500, 404)
-      throw new Error(`Ralat dari server Google: Status ${response.status}`);
-    }
-    console.log("Data berjaya dihantar ke Google Sheet.");
-    return response.text();
-  })
-  .then(googleResponse => {
-    console.log("Respons dari Google:", googleResponse);
-    console.log("Menyediakan data untuk ToyyibPay...");
-
-    // 4. Sediakan data untuk ToyyibPay
-    const dataForToyyib = new URLSearchParams();
-    dataForToyyib.append("userSecretKey", "r1w0bv75-rlqt-k35b-gqal-mzxse5so0x2l");
-    dataForToyyib.append("categoryCode", "44ubvkc8");
-    dataForToyyib.append("billName", "Pembayaran eKlinik");
-    dataForToyyib.append("billDescription", "Bayaran ubat/ujian/prosedur dari eKlinik");
-    dataForToyyib.append("billAmount", (totalAmount * 100).toString());
-    dataForToyyib.append("billEmail", email);
-    dataForToyyib.append("billPhone", phone);
-    dataForToyyib.append("billTo", name);
-    dataForToyyib.append("billReturnUrl", "https://aizatsofian.github.io/eklinik/");
-    dataForToyyib.append("billCallbackUrl", "https://aizatsofian.github.io/eklinik/success.html");
-
-    console.log("Menghantar permintaan 'createBill' ke ToyyibPay...");
-
-    // 5. Hantar data ke ToyyibPay
-    return fetch("https://toyyibpay.com/index.php/api/createBill", {
-      method: "POST",
-      body: dataForToyyib
-    });
+    body: dataForToyyib
   })
   .then(response => response.json())
   .then(result => {
     console.log("Respons diterima dari ToyyibPay:", result);
-
-    // 6. Kendalikan respons dari ToyyibPay
     if (result[0]?.BillCode) {
-      console.log("BillCode berjaya dicipta:", result[0].BillCode);
-      localStorage.removeItem("cart"); // Kosongkan troli
+      localStorage.removeItem("cart");
       console.log("Troli dikosongkan. Mengubah hala ke laman pembayaran...");
       window.location.href = `https://toyyibpay.com/${result[0].BillCode}`;
     } else {
-      console.error("Gagal mencipta BillCode. Respons dari ToyyibPay:", result);
-      alert("Gagal mencipta bil pembayaran. Sila rujuk konsol untuk ralat.");
+      console.error("Gagal mencipta BillCode. Respons:", result);
+      alert("Gagal mencipta bil pembayaran. Sila semak konsol.");
     }
   })
   .catch(err => {
-    // 7. Tangkap sebarang ralat dalam keseluruhan proses
-    console.error("Satu ralat tidak dijangka telah berlaku dalam rantaian proses:", err);
-    alert("Proses pembayaran gagal. Sila semak konsol untuk butiran teknikal.");
+    console.error("Ralat semasa permintaan ke ToyyibPay:", err);
+    alert("Proses pembayaran gagal. Sila semak konsol.");
   });
 }
