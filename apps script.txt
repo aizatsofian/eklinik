@@ -1,15 +1,23 @@
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Parse JSON body
   const data = JSON.parse(e.postData.contents);
+
+  const name = data.name || "";
+  const email = data.email || "";
+  const phone = data.phone || "";
+  const items = JSON.stringify(data.items || []);
+  const total = data.total || 0;
 
   sheet.appendRow([
     new Date(),
-    data.name,
-    data.email,
-    data.phone,
-    JSON.stringify(data.items),
-    data.total
+    name,
+    email,
+    phone,
+    items,
+    total
   ]);
 
-  return ContentService.createTextOutput("OK").setMimeType(ContentService.MimeType.TEXT);
+  return ContentService.createTextOutput("OK");
 }
