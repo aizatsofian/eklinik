@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <title>eKlinik</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>EKLINIK</h1>
+        <img src="img/CART.png" alt="Cart" id="cart-icon" style="cursor: pointer;">
+    </div>
+
+    <div class="services">
+        <div class="card">
+            <img src="img/TEST.png" alt="Ujian">
+            <h3>UJIAN</h3>
+            <p>RM1</p>
+            <button onclick="addToCart({ id: 1, name: 'Ujian', price: 1, img: 'img/TEST.png' })">ADD TO CART</button>
+        </div>
+        <div class="card">
+            <img src="img/UBAT.png" alt="Ubat">
+            <h3>UBAT</h3>
+            <p>RM1</p>
+            <button onclick="addToCart({ id: 2, name: 'Ubat', price: 1, img: 'img/UBAT.png' })">ADD TO CART</button>
+        </div>
+        <div class="card">
+            <img src="img/PROSEDUR.png" alt="Prosedur">
+            <h3>PROSEDUR</h3>
+            <p>RM1</p>
+            <button onclick="addToCart({ id: 3, name: 'Prosedur', price: 1, img: 'img/PROSEDUR.png' })">ADD TO CART</button>
+        </div>
+        <div class="card">
+            <img src="img/KONSULTASI.png" alt="Konsultasi">
+            <h3>KONSULTASI</h3>
+            <p>RM1</p>
+            <button onclick="addToCart({ id: 4, name: 'Konsultasi', price: 1, img: 'img/KONSULTASI.png' })">ADD TO CART</button>
+        </div>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
