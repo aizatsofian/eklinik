@@ -26,7 +26,7 @@ function handleCheckout() {
   // 2. Sediakan data untuk dihantar
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const sheetURL = "https://script.google.com/macros/s/AKfycbx4YdSI0ehfBSHApWCnUD5oRAW1-d25saBnImkY1qcYCm5SH264dOhwCBvEAYq1XKRK1A/exec";
-  
+
   const dataForGoogle = {
     name,
     email,
@@ -71,7 +71,7 @@ function handleCheckout() {
     dataForToyyib.append("billCallbackUrl", "https://aizatsofian.github.io/eklinik/success.html");
 
     console.log("Menghantar permintaan 'createBill' ke ToyyibPay...");
-    
+
     // 5. Hantar data ke ToyyibPay
     return fetch("https://toyyibpay.com/index.php/api/createBill", {
       method: "POST",
@@ -81,7 +81,7 @@ function handleCheckout() {
   .then(response => response.json())
   .then(result => {
     console.log("Respons diterima dari ToyyibPay:", result);
-    
+
     // 6. Kendalikan respons dari ToyyibPay
     if (result[0]?.BillCode) {
       console.log("BillCode berjaya dicipta:", result[0].BillCode);
